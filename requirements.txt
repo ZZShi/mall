@@ -1,3 +1,4 @@
 fastapi
+pedantic=1.10.12
 uvicorn
 tortoise-orm
