@@ -14,15 +14,15 @@
                 <span class="line"></span>
             </div>
             <div>
-                <el-form :model="form" class="w-[250px]">
-                    <el-form-item>
+                <el-form ref="formRef" :model="form" class="w-[250px]" :rules="rules">
+                    <el-form-item prop="username">
                         <el-input v-model="form.username" placeholder="请输入用户名">
                             <template #prefix>
                                 <el-icon><user /></el-icon>
                             </template>
                         </el-input>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item prop="password">
                         <el-input v-model="form.password" placeholder="请输入密码" type="password" show-password>
                             <template #prefix>
                                 <el-icon><lock /></el-icon>
@@ -39,15 +39,60 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router';
+import { login } from '~/api/manage'
+import { ElNotification } from 'element-plus'
+import { ro } from 'element-plus/lib/locale/index.js';
+
+const router = useRouter()
 
 const form = reactive({
     username: '',
     password: '',
 })
 
+const rules = reactive({
+  username: [
+    { required: true, message: '用户名不能为空', trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: '密码不能为空', trigger: 'blur' }
+  ]
+})
+
+const formRef = ref({})
+
 const onSubmit = () => {
-  console.log('submit!')
+    formRef.value.validate((valid)=>{
+        if(!valid){
+            return false
+        }
+        login(form.username, form.password)
+        .then(res=>{
+            console.log(res.data.data)
+            // 提示成功
+            ElNotification({
+                title: 'Success',
+                message: '登录成功',
+                type: 'success',
+                duration: 3000
+            })
+            // 存储 token 和用户信息
+
+            // 跳转到后台首页
+            router.push("/")
+        })
+        .catch(err=>{
+            console.log(err.response.data.msg)
+            ElNotification({
+                title: 'Warning',
+                message: err.response.data.msg || '请求失败',
+                type: 'warning',
+                duration: 3000
+            })
+        })
+    })
 }
 
 </script>
