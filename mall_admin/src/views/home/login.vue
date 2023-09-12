@@ -30,7 +30,7 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button round color="#626aef" class="w-[250px]" type="primary" @click="onSubmit">登 录</el-button>
+                        <el-button round color="#626aef" class="w-[250px]" type="primary" @click="onSubmit" :loading="loading">登 录</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -41,11 +41,12 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router';
-import { login } from '~/api/manage'
-import { ElNotification } from 'element-plus'
-import { ro } from 'element-plus/lib/locale/index.js';
+import { login, getInfo } from '~/api/manage'
+import { toast } from '~/composables/util'
+import { setToken } from '~/composables/auth'
 
 const router = useRouter()
+const loading = ref(false)
 
 const form = reactive({
     username: '',
@@ -61,37 +62,27 @@ const rules = reactive({
   ]
 })
 
-const formRef = ref({})
 
 const onSubmit = () => {
-    formRef.value.validate((valid)=>{
-        if(!valid){
-            return false
-        }
-        login(form.username, form.password)
-        .then(res=>{
-            console.log(res.data.data)
-            // 提示成功
-            ElNotification({
-                title: 'Success',
-                message: '登录成功',
-                type: 'success',
-                duration: 3000
-            })
-            // 存储 token 和用户信息
+    loading.value = true
+    login(form.username, form.password)
+    .then(res=>{
+        console.log(res.token)
+        // 提示成功
+        toast("登录成功")
+        
+        // 存储 token 和用户信息
+        setToken(res.token)
 
-            // 跳转到后台首页
-            router.push("/")
+        // 获取用户信息 
+        getInfo().then(res2=>{
+            console.log(res2)
         })
-        .catch(err=>{
-            console.log(err.response.data.msg)
-            ElNotification({
-                title: 'Warning',
-                message: err.response.data.msg || '请求失败',
-                type: 'warning',
-                duration: 3000
-            })
-        })
+
+        // 跳转到后台首页
+        router.push("/")
+    }).finally(()=>{
+        loading.value = false
     })
 }
 

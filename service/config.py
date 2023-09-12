@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 from pydantic import BaseSettings
@@ -37,6 +38,40 @@ class Settings(BaseSettings):
     logger_path_white_list: list[str] = ['/user/captcha', '/test/files', '/test/uploadfile']
     # TrustedHostMiddleware
     allowed_hosts = ["*"]
+
+    @property
+    def loguru_config(self):
+        return {
+            "handlers": [
+                {
+                    "sink": sys.stdout,
+                    "level": "DEBUG",
+                    "format": "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | {thread.name} | "
+                              "<level>{level}</level> | "
+                              "<cyan>{module}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
+                              "<level>{message}</level>"
+                },
+                {
+                    "sink": self.log_dir / 'fastapi.log',
+                    "level": "INFO",
+                    "rotation": "10 MB",
+                    "retention": "1 week",
+                    "encoding": 'utf-8',
+                    "format": "{time:YYYY-MM-DD HH:mm:ss.SSS} | {thread.name} | {level} | "
+                              "{module} : {function}:{line} -  {message}"
+                },
+                {
+                    "sink": self.log_dir / 'fastapi-error.log',
+                    "serialize": True,
+                    "level": 'ERROR',
+                    "retention": "1 week",
+                    "rotation": "10 MB",
+                    "encoding": 'utf-8',
+                    "format": "{time:YYYY-MM-DD HH:mm:ss.SSS} | {thread.name} | {level} | "
+                              "{module} : {function}:{line} -  {message}"
+                },
+            ],
+        }
 
 
 settings = Settings()

@@ -1,4 +1,7 @@
+import logging
+
 import uvicorn
+from loguru import logger
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
@@ -7,6 +10,12 @@ from api import admin, client
 from common.events import register_events
 from common.exceptions import register_exceptions
 from common.middlewares import register_middlewares
+
+# 配置日志器
+logger.configure(**settings.loguru_config)
+# 获取当前所有日志器的名字
+logger_name_list = [name for name in logging.root.manager.loggerDict]
+logger.debug(f"logger_name_list: {sorted(logger_name_list)}")
 
 
 app = FastAPI(
