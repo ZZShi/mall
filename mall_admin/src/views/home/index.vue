@@ -3,6 +3,7 @@
     <el-button @click="set">设置</el-button>
     <el-button @click="get">获取</el-button>
     <el-button @click="remove">移除</el-button>
+    {{ $store.state.user }}
 </template>
 
 <script lang="ts" setup>
