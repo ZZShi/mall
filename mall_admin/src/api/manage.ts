@@ -1,8 +1,8 @@
-import { service } from '~/axios'
+import axios from '~/axios'
 
 // 登录
 export function login(username: string, password: string) {
-    return service.post("/admin/login", {
+    return axios.post("/admin/login", {
         username,
         password
     })
@@ -10,5 +10,5 @@ export function login(username: string, password: string) {
 
 // 获取用户信息
 export function getInfo() {
-    return service.post("/admin/getinfo")
+    return axios.post("/admin/getinfo")
 }

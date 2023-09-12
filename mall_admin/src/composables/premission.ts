@@ -1,6 +1,6 @@
 import router from "~/router"
-import { getToken } from "~/composables/auth"
 import { toast } from "~/composables/util"
+import { getToken } from "~/composables/auth"
 
 
 // 全局前置守卫

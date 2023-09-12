@@ -7,6 +7,7 @@ import path from "path"
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
+    extensions: ['.js', '.ts', '.vue', '.json', '.scss'],
     alias: {
       "~": path.resolve(__dirname, "src")
     }

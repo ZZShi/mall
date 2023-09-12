@@ -3,7 +3,7 @@ import { toast } from '~/composables/util'
 import { getToken } from '~/composables/auth'
 
 
-export const service = axios.create({
+const service = axios.create({
   baseURL: '/api'
 })
 
@@ -30,3 +30,5 @@ service.interceptors.response.use(function (response) {
   toast(error.response.data.msg || '请求失败', "error")
   return Promise.reject(error);
 });
+
+export default service;

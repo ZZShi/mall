@@ -1,11 +1,11 @@
 import { createApp } from 'vue'
-import ElementPlus from 'element-plus'
+import 'virtual:windi.css'
 import 'element-plus/dist/index.css'
+import ElementPlus from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
-import 'virtual:windi.css'
-import router from './router'
 import store from './store'
+import router from './router'
 import "./composables/premission"
 
 const app = createApp(App)
