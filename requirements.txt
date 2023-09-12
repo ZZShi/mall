@@ -1,4 +1,9 @@
 fastapi
 pedantic=1.10.12
 uvicorn
+itsdangerous
+orjson
+
+loguru
 tortoise-orm
+redis
