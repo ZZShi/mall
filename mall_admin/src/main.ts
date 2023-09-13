@@ -7,6 +7,7 @@ import App from './App.vue'
 import store from './store'
 import router from './router'
 import "./composables/premission"
+import "nprogress/nprogress.css"
 
 const app = createApp(App)
 
