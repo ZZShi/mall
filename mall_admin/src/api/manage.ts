@@ -8,6 +8,11 @@ export function login(username: string, password: string) {
     })
 }
 
+// 退出登录
+export function logout() {
+    return axios.post("/admin/logout")
+}
+
 // 获取用户信息
 export function getInfo() {
     return axios.post("/admin/getinfo")

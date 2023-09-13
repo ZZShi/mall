@@ -44,12 +44,10 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router';
-import { login, getInfo } from '~/api/manage'
 import { toast } from '~/composables/util'
-import { setToken } from '~/composables/auth'
 
 const store = useStore()
 const router = useRouter()
@@ -72,61 +70,63 @@ const rules = reactive({
 
 const onSubmit = () => {
     loading.value = true
-    login(form.username, form.password)
-        .then(res => {
-            console.log(res.token)
-            // 提示成功
-            toast("登录成功")
+    store.dispatch("login", form).then(res => {
+        toast("登录成功")
+        router.push("/")
+    }).finally(() => {
+        loading.value = false
+    })
+}
 
-            // 存储 token 和用户信息
-            setToken(res.token)
 
-            // 获取用户信息 
-            getInfo().then(res2 => {
-                console.log(res2)
-                store.commit("SET_USERINFO", res2)
-            })
+// 添加键盘监听
+onMounted(() => {
+    document.addEventListener("keyup", onkeyup)
+})
+// 移除键盘监听
+onBeforeUnmount(() => {
+    document.removeEventListener("keyup", onkeyup)
+})
 
-            // 跳转到后台首页
-            router.push("/")
-        }).finally(() => {
-            loading.value = false
-        })
+// 监听回车事件
+function onkeyup(e) {
+    if (e.key == "Enter") {
+        onSubmit()
+    }
 }
 
 </script>
 
-<style lang="postcss" scoped>
-.login-container {
-    @apply min-h-screen bg-indigo-500;
-}
+<style lang="postcss" scoped> .login-container {
+     @apply min-h-screen bg-indigo-500;
+ }
 
-.login-container .left,
-.login-container .right {
-    @apply flex items-center justify-center;
-}
+ .login-container .left,
+ .login-container .right {
+     @apply flex items-center justify-center;
+ }
 
-.login-container .right {
-    @apply bg-light-50 flex-col;
-}
+ .login-container .right {
+     @apply bg-light-50 flex-col;
+ }
 
-.left>div>div:first-child {
-    @apply font-bold text-5xl text-light-50 mb-4;
-}
+ .left>div>div:first-child {
+     @apply font-bold text-5xl text-light-50 mb-4;
+ }
 
-.left>div>div:last-child {
-    @apply text-gray-200 text-sm;
-}
+ .left>div>div:last-child {
+     @apply text-gray-200 text-sm;
+ }
 
-.right .title {
-    @apply font-bold text-3xl text-gray-800;
-}
+ .right .title {
+     @apply font-bold text-3xl text-gray-800;
+ }
 
-.right>div {
-    @apply flex items-center justify-center my-5 text-gray-300 space-x-2;
-}
+ .right>div {
+     @apply flex items-center justify-center my-5 text-gray-300 space-x-2;
+ }
 
-.right .line {
-    @apply h-[1px] w-16 bg-gray-200;
-}
+ .right .line {
+     @apply h-[1px] w-16 bg-gray-200;
+ }
 </style>
