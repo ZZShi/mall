@@ -2,6 +2,7 @@ import {
     createRouter,
     createWebHashHistory
 } from 'vue-router'
+import Admin from '~/layouts/admin.vue'
 import Index from '~/views/home/index.vue'
 import About from '~/views/home/about.vue'
 import Login from '~/views/home/login.vue'
@@ -12,10 +13,17 @@ const router = createRouter({
     routes: [
         {
             path: "/",
-            component: Index,
-            meta: {
-                "title": "首页"
-            }
+            component: Admin,
+            children: [
+                {
+                    path: "/",
+                    component: Index,
+                    meta: {
+                        "title": "首页"
+                    }
+                }
+            ]
+            
         },
         {
             path: "/about",

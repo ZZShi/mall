@@ -1,2 +1,4 @@
+.idea
 /venv/
 /mall_admin/node_modules/
+/service/logs

@@ -2,15 +2,16 @@
     <el-row class="login-container">
         <el-col :lg="16" :md="12" class="left">
             <div>
-                <div>欢迎光临</div>
-                <div>基于 VUE3 + Vite 的学习地址登录页</div>
+                <!-- <div>淘宝商城</div>
+                <div>基于 VUE3 + Vite 的学习地址登录页</div> -->
+                <!-- <el-image style="width: 100px; height: 100px" :src="https://vuejs.org/guide/quick-start.html#local"></el-image> -->
             </div>
         </el-col>
         <el-col :lg="8" :md="12" class="right">
-            <h2 class="title">欢迎回来</h2>
+            <h2 class="title">淘宝商城</h2>
             <div>
                 <span class="line"></span>
-                <span>账号密码登录</span>
+                <span>基于 VUE3 + Vite 的超强商城</span>
                 <span class="line"></span>
             </div>
             <div>
