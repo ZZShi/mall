@@ -28,24 +28,27 @@ class Settings(BaseSettings):
     cors_allow_credentials: bool = True
     cors_allow_methods: list[str] = ["PUT", 'POST', 'GET', 'DELETE', 'OPTIONS']
     cors_allow_headers: list[str] = ["*"]
-    # Session
-    session_secret_key = "sadehewagbwft34ba"
-    session_cookie = "session_id"
-    session_max_age = 14 * 24 * 60 * 60
-    # SetSessionMiddleware
-    session_cookie_name = 'session'
     # 日志中间件的白名单，只填写去除 url_prefix 的部分
     logger_path_white_list: list[str] = [
         '/user/captcha', '/test/files', '/test/uploadfile']
     # TrustedHostMiddleware
     allowed_hosts = ["*"]
 
-    # 数据库
+    # Mysql 配置
     mysql_db: str = os.getenv("MYSQL_DB")
     mysql_host: str = os.getenv("MYSQL_HOST")
     mysql_port: int = os.getenv("MYSQL_PORT")
     mysql_user: str = os.getenv("MYSQL_USER")
     mysql_pwd: str = os.getenv("MYSQL_PWD")
+
+    # Redis 配置
+    cache_redis_url: str = "redis://localhost:26379/0"
+    # Session
+    session_secret_key = "sadehewagbwft34ba"
+    session_cookie = "session_id"
+    session_max_age = 14 * 24 * 60 * 60
+    # SetSessionMiddleware
+    session_cookie_name = 'session'
 
     @property
     def tortoise_orm_config(self) -> dict:
@@ -64,7 +67,6 @@ class Settings(BaseSettings):
             },
             "apps": {
                 "base": {"models": ["models.user"], "default_connection": "base"},
-                # "user": {"models": ["service.models"], "default_connection": "base"},
             },
             'use_tz': False,
             'timezone': 'Asia/Shanghai'

@@ -1,6 +1,6 @@
 from fastapi import Request
-from passlib.handlers.pbkdf2 import pbkdf2_sha256
 from tortoise import fields
+from passlib.handlers.pbkdf2 import pbkdf2_sha256
 
 from service.models.abc import TortoiseBaseModel
 from service.enums.user import OperationMethod, OperationObject, UserGender

@@ -1,9 +1,13 @@
 import asyncio
+from functools import lru_cache
 from typing import List, Optional, Dict
 
-from fastapi import Query
+import redis
+from redis import Redis
 from tortoise.queryset import QuerySet
+from fastapi import Query, Depends, Request
 
+from service.config import settings
 from service.common.resp import PageData
 
 
@@ -39,3 +43,21 @@ class PageSizePaginator:
     @property
     def offset(self):
         return self.page_size * (self.page_num - 1)
+
+
+@lru_cache()
+def get_redis() -> Redis:
+    return redis.from_url(settings.cache_redis_url, encoding='utf-8', decode_responses=True)
+
+
+def get_session_value(req: Request):
+    return req.session.get(settings.session_cookie_name)
+
+
+async def get_captcha_code(session_value: str = Depends(get_session_value),
+                           r: Redis = Depends(get_redis)):
+    if session_value is None:
+        return
+    key = settings.captcha_key.format(session_value)
+    code_in_redis = await r.get(key)
+    return code_in_redis
