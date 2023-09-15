@@ -35,7 +35,8 @@ class Settings(BaseSettings):
     # SetSessionMiddleware
     session_cookie_name = 'session'
     # 日志中间件的白名单，只填写去除 url_prefix 的部分
-    logger_path_white_list: list[str] = ['/user/captcha', '/test/files', '/test/uploadfile']
+    logger_path_white_list: list[str] = [
+        '/user/captcha', '/test/files', '/test/uploadfile']
     # TrustedHostMiddleware
     allowed_hosts = ["*"]
 
@@ -71,6 +72,80 @@ class Settings(BaseSettings):
                               "{module} : {function}:{line} -  {message}"
                 },
             ],
+        }
+
+    @property
+    def log_config(self):
+        return {
+            "version": 1,
+            "disable_existing_loggers": False,
+            "formatters": {
+                "standard": {
+                    "format": "%(asctime)s | %(levelname)7s | %(name)s | "
+                              "%(module)s.%(funcName)s:%(lineno)d - %(message)s",
+                    "use_colors": None
+                },
+                "simple": {
+                    "format": "%(levelname)s %(message)s"
+                }
+            },
+            "handlers": {
+                "stderr": {
+                    "level": "DEBUG",
+                    "class": "logging.StreamHandler",
+                    "formatter": "standard",
+                    "stream": "ext://sys.stderr"
+                },
+                "stdout": {
+                    "level": "DEBUG",
+                    "class": "logging.StreamHandler",
+                    "formatter": "standard",
+                    "stream": "ext://sys.stdout"
+                },
+                "loguru": {
+                    "class": "service.common.log.InterceptHandler"
+                }
+            },
+            "loggers": {
+                "fastapi": {
+                    "handlers": [
+                        "loguru"
+                    ],
+                    "level": "DEBUG"
+                },
+                "tortoise": {
+                    "handlers": [
+                        "loguru"
+                    ],
+                    "level": "WARNING"
+                },
+                "apscheduler": {
+                    "handlers": [
+                        "loguru"
+                    ],
+                    "level": "INFO"
+                },
+                "uvicorn": {
+                    "handlers": [
+                        "loguru"
+                    ],
+                    "level": "INFO"
+                },
+                "uvicorn.error": {
+                    "handlers": [
+                        "loguru"
+                    ],
+                    "level": "INFO",
+                    "propagate": False
+                },
+                "uvicorn.access": {
+                    "handlers": [
+                        "loguru"
+                    ],
+                    "level": "INFO",
+                    "propagate": False
+                }
+            }
         }
 
 

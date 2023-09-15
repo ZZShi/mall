@@ -1,26 +1,23 @@
 import logging
+from types import FrameType
+from typing import cast
 
-import loguru
-from fastapi import FastAPI
-
-
-class LoguruHandler(logging.Handler):
-    def emit(self, record):
-        log_entry = self.format(record)
-        loguru.logger.opt(depth=6).log(record.levelno, log_entry)
+from loguru import logger
 
 
-app = FastAPI()
+class InterceptHandler(logging.Handler):
+    def emit(self, record: logging.LogRecord) -> None:  # pragma: no cover
+        # Get corresponding Loguru level if it exists
+        try:
+            level = logger.level(record.levelname).name
+        except ValueError:
+            level = str(record.levelno)
 
-loguru_handler = LoguruHandler()
-loguru_handler.setLevel(logging.DEBUG)
+        # Find caller from where originated the logged message
+        frame, depth = logging.currentframe(), 2
+        while frame.f_code.co_filename == logging.__file__:  # noqa: WPS609
+            frame = cast(FrameType, frame.f_back)
+            depth += 1
 
-app.logger.handlers = [loguru_handler]
-
-
-@app.get("/")
-async def root():
-    app.logger.debug("这是一个调试日志")
-    app.logger.info("这是一个信息日志")
-    app.logger.warning("这是一个警告日志")
-    return {"message": "Hello, World!"}
+        logger.opt(depth=depth, exception=record.exc_info).log(
+                level, record.getMessage(), )

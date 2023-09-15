@@ -1,5 +1,3 @@
-import logging
-
 import uvicorn
 from loguru import logger
 from fastapi import FastAPI
@@ -13,9 +11,6 @@ from common.middlewares import register_middlewares
 
 # 配置日志器
 logger.configure(**settings.loguru_config)
-# 获取当前所有日志器的名字
-logger_name_list = [name for name in logging.root.manager.loggerDict]
-logger.debug(f"logger_name_list: {sorted(logger_name_list)}")
 
 
 app = FastAPI(
@@ -48,4 +43,5 @@ async def say_hello():
 
 
 if __name__ == '__main__':
-    uvicorn.run(app="start:app", host=settings.server_host, port=settings.server_port, reload=settings.is_dev)
+    uvicorn.run(app="start:app", host=settings.server_host, port=settings.server_port, reload=settings.is_dev,
+                log_config=settings.log_config)
