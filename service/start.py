@@ -2,6 +2,7 @@ import uvicorn
 from loguru import logger
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
+from tortoise.contrib.fastapi import register_tortoise
 
 from config import settings
 from api import admin, client
@@ -23,6 +24,9 @@ register_exceptions(app)
 
 # 注册中间件
 register_middlewares(app)
+
+# 注册数据库
+register_tortoise(app, config=settings.tortoise_orm_config, generate_schemas=False)
 
 # 注册事件
 register_events(app)

@@ -6,4 +6,6 @@ orjson
 
 loguru
 tortoise-orm
+aiomysql
 redis
+passlib

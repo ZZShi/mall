@@ -14,11 +14,11 @@ class Settings(BaseSettings):
     base_dir = Path(__file__).absolute().parent
     log_dir = base_dir / 'logs'
 
-    # url的前缀
+    # url 的前缀
     url_prefix: str = "/api/v1"
     admin_url_prefix: str = f"{url_prefix}/admin"
     client_url_prefix: str = f"{url_prefix}/client"
-    # host
+    # host 配置
     server_host: str = '0.0.0.0'
     server_port: int = 8000
 
@@ -39,6 +39,36 @@ class Settings(BaseSettings):
         '/user/captcha', '/test/files', '/test/uploadfile']
     # TrustedHostMiddleware
     allowed_hosts = ["*"]
+
+    # 数据库
+    mysql_db: str = os.getenv("MYSQL_DB")
+    mysql_host: str = os.getenv("MYSQL_HOST")
+    mysql_port: int = os.getenv("MYSQL_PORT")
+    mysql_user: str = os.getenv("MYSQL_USER")
+    mysql_pwd: str = os.getenv("MYSQL_PWD")
+
+    @property
+    def tortoise_orm_config(self) -> dict:
+        return {
+            "connections": {
+                "base": {
+                    'engine': 'tortoise.backends.mysql',
+                    "credentials": {
+                        'host': self.mysql_host,
+                        'user': self.mysql_user,
+                        'password': self.mysql_pwd,
+                        'port': self.mysql_port,
+                        'database': 'mall',
+                    }
+                }
+            },
+            "apps": {
+                "base": {"models": ["models.user"], "default_connection": "base"},
+                # "user": {"models": ["service.models"], "default_connection": "base"},
+            },
+            'use_tz': False,
+            'timezone': 'Asia/Shanghai'
+        }
 
     @property
     def loguru_config(self):
