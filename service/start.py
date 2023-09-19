@@ -1,3 +1,5 @@
+import logging.config
+
 import uvicorn
 from loguru import logger
 from fastapi import FastAPI
@@ -12,6 +14,7 @@ from common.middlewares import register_middlewares
 
 # 配置日志器
 logger.configure(**settings.loguru_config)
+logging.config.dictConfig(settings.log_config)
 
 
 app = FastAPI(
@@ -47,5 +50,4 @@ async def say_hello():
 
 
 if __name__ == '__main__':
-    uvicorn.run(app="start:app", host=settings.server_host, port=settings.server_port, reload=settings.is_dev,
-                log_config=settings.log_config)
+    uvicorn.run(app="start:app", host=settings.server_host, port=settings.server_port, reload=settings.is_dev)
