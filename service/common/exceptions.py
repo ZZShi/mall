@@ -70,7 +70,7 @@ async def http_error_handler(_: Request, exc: HTTPException):
 async def http422_error_handler(_: Request, exc: Union[RequestValidationError, ValidationError], ) -> JSONResponse:
     """    参数校验错误处理    """
     logger.error(f"参数校验错误处理[422] {exc.errors()=}")
-    if settings.debug:
+    if settings.is_dev:
         return JSONResponse(RespFail(code=422, msg="数据校验错误", data=exc.errors()).dict(by_alias=True),
                             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
     else:

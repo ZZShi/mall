@@ -49,6 +49,10 @@ class Settings(BaseSettings):
     session_max_age = 14 * 24 * 60 * 60
     # SetSessionMiddleware
     session_cookie_name = 'session'
+    # 图片验证码有效时间
+    captcha_seconds: int = 5 * 60
+    # 图片验证码key
+    captcha_key: str = 'captcha:{}'
 
     @property
     def tortoise_orm_config(self) -> dict:

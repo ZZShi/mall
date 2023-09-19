@@ -28,9 +28,8 @@ def check_password(password: str) -> str:
 # -------------------------------  请求部分  ---------------------------------------------
 class UserRegister(BaseModel):
     username: str = Field(..., min_length=4, max_length=20, description='用户名', example="这里输入用户名")
-    password: str = Field(..., min_length=8, max_length=20, description='密码')
-    password2: str = Field(..., min_length=8, max_length=20, description='密码2')
-    code: str = Field(..., min_length=4, max_length=4, description='验证码')
+    password: str = Field(..., min_length=4, max_length=20, description='密码')
+    password2: str = Field(..., min_length=4, max_length=20, description='密码2')
 
     _check_username = validator("username", allow_reuse=True)(check_username)
     _check_password = validator("password", allow_reuse=True)(check_password)

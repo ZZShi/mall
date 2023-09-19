@@ -1,6 +1,6 @@
 import logging
-from types import FrameType
 from typing import cast
+from types import FrameType
 
 from loguru import logger
 

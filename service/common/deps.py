@@ -56,7 +56,7 @@ def get_session_value(req: Request):
 
 async def get_captcha_code(session_value: str = Depends(get_session_value),
                            r: Redis = Depends(get_redis)):
-    if session_value is None:
+    if not session_value:
         return
     key = settings.captcha_key.format(session_value)
     code_in_redis = await r.get(key)

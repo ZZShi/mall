@@ -61,77 +61,36 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
-import store from '~/store';
-import { showModal, toast } from '~/composables/util';
-import { useRouter } from 'vue-router';
 import { useFullscreen } from '@vueuse/core'
 import FormDrawer from '~/components/FormDrawer.vue';
-import { updatePassword } from '~/api/manage';
+import { useRePassword, useLogout } from '~/composables/user'
 
-const { isFullscreen, toggle } = useFullscreen()
 
-const router = useRouter()
-const form = ref({
-    "oldpassword": "admin",
-    "password": "12345",
-    "repassword": "12345"
-})
-
-const rules = reactive({
-    oldpassword: [
-        { required: true, message: '旧密码不能为空', trigger: 'blur' }
-    ],
-    password: [
-        { required: true, message: '新密码不能为空', trigger: 'blur' }
-    ],
-    repassword: [
-        { required: true, message: '确认密码不能为空', trigger: 'blur' }
-    ]
-})
-
-const formDrawerRef = ref(null)
+const { handleLogout } = useLogout();
+const { isFullscreen, toggle } = useFullscreen();
+const {
+        formDrawerRef,
+        form,
+        rules,
+        onSubmit,
+        openRePasswordForm
+    } = useRePassword()
+ 
 
 const handleRefresh = () => location.reload()
 
 const handleCommand = (c) => {
     switch (c) {
         case "rePassword":
-            console.log("Todo 修改密码")
-            formDrawerRef.value.open()
+            openRePasswordForm()
             break
         case "logout":
             handleLogout()
-            break 
+            break
     }
 
 }
 
-function onSubmit() {
-    formDrawerRef.value.showLoading()
-    updatePassword(form.value).then(res=>{
-        toast("修改密码成功")
-        store.dispatch("logout")
-        router.push("/login")
-    }).finally(()=>{
-        formDrawerRef.value.hideLoading()
-    })
-
-}
-
-function handleLogout() {
-    showModal("是否退出登录？").then(res => {
-        console.log("确认退出登录")
-        store.dispatch("logout").then(res => {
-            // 提示退出登录成功
-            toast("退出登录成功")
-            // 跳转回登录页
-            router.push("/login")
-        })
-    }).catch(err => {
-        console.log("取消退出登录")
-    })
-}
 </script>
 
 <style lang="postcss">
