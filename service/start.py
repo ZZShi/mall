@@ -29,7 +29,7 @@ register_exceptions(app)
 register_middlewares(app)
 
 # 注册数据库
-register_tortoise(app, config=settings.tortoise_orm_config, generate_schemas=False)
+register_tortoise(app, config=settings.tortoise_orm_config, generate_schemas=True)
 
 # 注册事件
 register_events(app)

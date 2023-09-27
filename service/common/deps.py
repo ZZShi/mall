@@ -54,10 +54,10 @@ def get_session_value(req: Request):
     return req.session.get(settings.session_cookie_name)
 
 
-async def get_captcha_code(session_value: str = Depends(get_session_value),
-                           r: Redis = Depends(get_redis)):
+def get_captcha_code(session_value: str = Depends(get_session_value),
+                     r: Redis = Depends(get_redis)) -> str | None:
     if not session_value:
         return
     key = settings.captcha_key.format(session_value)
-    code_in_redis = await r.get(key)
+    code_in_redis = r.get(key)
     return code_in_redis

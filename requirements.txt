@@ -3,9 +3,16 @@ pedantic=1.10.12
 uvicorn
 itsdangerous
 orjson
+simpel_captcha
+python-jose
+python-multipart
 
 loguru
+cryptography
+aerich
 tortoise-orm
 aiomysql
 redis
 passlib
+
+requests

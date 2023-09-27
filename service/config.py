@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+from typing import List
 
 from pydantic import BaseSettings
 
@@ -21,6 +22,8 @@ class Settings(BaseSettings):
     # host 配置
     server_host: str = '0.0.0.0'
     server_port: int = 8000
+    # /docs 获取 token 的 url
+    oauth2_token_url: str = "/test/auth/token"
 
     # 中间件配置
     # 跨域请求
@@ -54,11 +57,22 @@ class Settings(BaseSettings):
     # 图片验证码key
     captcha_key: str = 'captcha:{}'
 
+    # jwt加密的盐   openssl rand -hex 32
+    jwt_secret_key: str = "a489b1d15b4902c5e82086791c6a5820035c6b3eee5ee2759fd66931e486b5a9"
+    # jwt加密算法
+    jwt_algorithm: str = 'HS256'
+    # token过期时间，单位：秒
+    jwt_exp_seconds: int = 7 * 24 * 60 * 60
+
+    @property
+    def tortoise_orm_model_modules(self) -> List[str]:
+        return ['aerich.models', 'service.models']
+
     @property
     def tortoise_orm_config(self) -> dict:
         return {
             "connections": {
-                "base": {
+                "default": {
                     'engine': 'tortoise.backends.mysql',
                     "credentials": {
                         'host': self.mysql_host,
@@ -70,7 +84,10 @@ class Settings(BaseSettings):
                 }
             },
             "apps": {
-                "base": {"models": ["models.user"], "default_connection": "base"},
+                "base": {
+                    "models": self.tortoise_orm_model_modules,
+                    "default_connection": "default"
+                },
             },
             'use_tz': False,
             'timezone': 'Asia/Shanghai'
