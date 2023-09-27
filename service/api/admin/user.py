@@ -54,7 +54,7 @@ def image_captcha(req: Request, redis: Redis = Depends(get_redis)):
     return RespSucc(data={"code": text, "session": key})
 
 
-@app.post('', response_model=Union[RespSingle[UserInfo], RespFail], summary='用户创建')
+@app.post('', response_model=Union[RespSingle[UserInfo], RespFail], summary='创建用户')
 async def create(post: UserRegister):
     if await User.filter(username=post.username).exists():
         return RespFail(code=10101, msg='当前用户名已被占用')
@@ -99,7 +99,7 @@ async def foo(p: ModifyInfo, me: User = Depends(get_current_user)):
     return RespSucc[UserInfo](data=me)
 
 
-@app.put('/password', response_model=Union[RespSucc, RespFail], summary='修改密码')
+@app.put('/password', response_model=Union[RespSucc, RespFail], summary='修改个人密码')
 async def foo(p: ModifyPassword, me: User = Depends(get_current_user)):
     if not me.check_password(p.old_password):
         return RespFail(msg="密码错误")
