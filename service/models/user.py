@@ -3,7 +3,8 @@ from tortoise import fields
 from passlib.handlers.pbkdf2 import pbkdf2_sha256
 
 from service.models.abc import TortoiseBaseModel
-from service.enums.user import OperationMethod, OperationObject, UserGender
+from service.enums.user import UserGender
+from service.utils.net import get_ip_addr
 
 
 class User(TortoiseBaseModel):
@@ -113,16 +114,18 @@ class UserProfile(TortoiseBaseModel):
         table = "profile"
 
 
-class OperationLog(TortoiseBaseModel):
-    user_id = fields.IntField(description="用户ID")
-    object_cls = fields.CharField(max_length=255, description="操作对象类")
-    method = fields.CharField(max_length=255, description="操作方法")
+class OpLog(TortoiseBaseModel):
     ip = fields.CharField(null=True, max_length=32, description="访问IP")
+    addr = fields.CharField(null=True, max_length=32, description="访问地址")
+    user_id = fields.IntField(description="用户ID")
     detail = fields.JSONField(description="详细参数")
 
+    class Meta:
+        table_description = "操作日志表"
+        table = "op_log"
+
     @classmethod
-    async def add_log(cls, req: Request, user_id: int, object_cls: OperationObject,
-                      method: OperationMethod, remark: str):
+    async def add_log(cls, req: Request, user_id: int, remark: str):
         # 正确获取ip
         if req.headers.get('x-forwarded-for'):
             ip: str = req.headers.get('x-forwarded-for')
@@ -141,9 +144,8 @@ class OperationLog(TortoiseBaseModel):
 
         data = {
             "user_id": user_id,
-            "object_cls": object_cls.value,
-            "method": method.value,
             "ip": ip,
+            "addr": get_ip_addr(ip),
             "remark": remark,
             "detail": {
                 "target_url": req.get("path"),

@@ -3,11 +3,11 @@ from datetime import datetime, timedelta
 
 from starlette import status
 from jose import jwt, JWTError
-from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, Request, HTTPException
+from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 
-from service.models import User
 from service.config import settings
+from service.models import User, Access
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.admin_url_prefix}/user{settings.oauth2_token_url}")
@@ -55,3 +55,19 @@ async def get_current_user(req: Request, token: str = Depends(oauth2_scheme)) ->
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="账号已被禁用")
     req.state.user = user
     return user
+
+
+async def check_permission(s: SecurityScopes, me: User = Depends(get_current_user)) -> bool:
+    """检查用户是否有权限"""
+    if not s.scopes:        # 权限的作用域，为空代表不检查
+        return True
+    if me.is_superuser:     # 判断是否是超级管理员，超级管理员拥有所有权限
+        return True
+    has_permission = await Access.filter(role__user__id=me.pk, scopes__in=set(s.scopes)).exists()
+    if has_permission:      # 判断角色是不是有此权限
+        return True
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="您没有操作权限",
+        headers={"scopes": s.scope_str}
+    )

@@ -10,7 +10,7 @@ from service.common.resp import ORMModel
 # -------------------------------  请求部分  ---------------------------------------------
 
 
-class CreateRole(BaseModel):
+class RoleCreate(BaseModel):
     """ 创建角色 """
     role_name: str = Field(..., alias='roleName')
     status: Optional[bool]
@@ -19,7 +19,7 @@ class CreateRole(BaseModel):
     menu_values: Optional[List[int]] = Field([], alias='menu')
 
 
-class UpdateRole(CreateRole):
+class RoleUpdate(RoleCreate):
     """ 更新角色 """
 
 
@@ -48,11 +48,9 @@ class RoleInfoOptionItem(ORMModel):
 
 class RoleInfo(ORMModel):
     """ 角色信息 """
-    id: int
     role_value: int = Field(..., alias='roleValue')
     role_name: str = Field(..., alias='roleName')
     status: bool
     order_no: Optional[int] = Field(..., alias='orderNo')
-    create_time: datetime = Field(..., alias='createTime')
     menu_values: Optional[List[int]] = Field([], alias='menu')
     remark: Optional[str]

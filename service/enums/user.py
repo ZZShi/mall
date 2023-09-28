@@ -2,7 +2,7 @@ from enum import Enum, unique, IntEnum
 
 
 @unique
-class OperationMethod(Enum):
+class OpMethod(Enum):
     login_by_account = "账号登陆"
     change_password = "修改密码"
 
@@ -16,7 +16,7 @@ class OperationMethod(Enum):
 
 
 @unique
-class OperationObject(Enum):
+class OpObject(Enum):
     user = "用户"
     account = "账号"
     role = "角色"
@@ -25,6 +25,6 @@ class OperationObject(Enum):
 
 
 class UserGender(IntEnum):
-    unknown = 0  # 未知
-    male = 1  # 男
-    female = 2  # 女
+    unknown = 0     # 未知
+    male = 1        # 男
+    female = 2      # 女

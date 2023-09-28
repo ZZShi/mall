@@ -11,7 +11,7 @@ from service.config import settings
 from service.common.resp import PageData
 
 
-class PageSizePaginator:
+class Paginator:
     """分页器"""
     def __init__(self, max_size: int = 100):
         self.max_size = max_size
