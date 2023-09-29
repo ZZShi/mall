@@ -43,12 +43,7 @@ async def create(p: UserRegister):
     if await User.filter(username=p.username).exists():
         return RespFail(msg='当前用户名已被占用')
     hero = get_hero()
-    info = {
-        "nickname": hero["name"],
-        "full_name": hero["title"],
-        "head_img": f"https://game.gtimg.cn/images/lol/act/img/champion/{hero['alias']}.png",
-    }
-    user = await User.create(**p.dict(), **info)
+    user = await User.create(**p.dict(), **hero)
     await user.set_password(p.password)
     user_info = UserInfo.from_orm(user)
     return RespSingle[UserInfo](data=user_info)
@@ -67,7 +62,7 @@ async def foo(p: UserLogin, code: str = Depends(get_captcha_code)):
     if not user.check_password(p.password):
         return RespFail(msg="密码错误")
     token = create_token(username=p.username)
-    return RespSucc(data={"token": token, "code": code})
+    return RespSucc(data={"token": f"bearer {token}", "code": code})
 
 
 @app.get(' ', response_model=Union[RespSingle[UserInfo], RespFail], summary='查看个人信息')

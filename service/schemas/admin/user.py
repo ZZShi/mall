@@ -34,6 +34,7 @@ class UserRegister(BaseModel):
     _check_username = validator("username", allow_reuse=True)(check_username)
     _check_password = validator("password", allow_reuse=True)(check_password)
 
+    @classmethod
     @validator('password2')
     def passwords_match(cls, value, values, ):
         if 'password' in values and value != values['password']:
@@ -57,6 +58,7 @@ class ModifyPassword(BaseModel):
 
     _check_password = validator("*", allow_reuse=True)(check_password)
 
+    @classmethod
     @validator('new_password2')
     def passwords_match(cls, value, values, ):
         if 'new_password' in values and value != values['new_password']:
@@ -71,6 +73,7 @@ class ModifyInfo(BaseModel):
     full_name: str | None = None
     gender: UserGender = UserGender.unknown
 
+    @classmethod
     @validator('*')
     def blank_strings(cls, v):
         return None if v == "" else v
@@ -86,20 +89,13 @@ class Token(ORMModel):
 
 class UserInfo(ORMModel):
     """ 用户信息 """
-    id: int = Field(..., alias='userId', description='用户ID')
+    name: Optional[str] = Field(None, alias='name', description="真实姓名")
     username: str = Field(..., alias='username', description='用户名')
     nickname: Optional[str] = Field(None, alias='nickname', description="昵称")
-    # email: Optional[EmailStr]
-    full_name: Optional[str] = Field(None, alias='realName', description="真实姓名")
-    # is_superuser: bool = Field(..., alias='isSuperuser')
-    # is_active: bool = Field(..., alias='isActive')
-    head_img: Optional[str] = Field(None, alias='avatar', description="头像")
-    gender: UserGender
-    # remarks: Optional[str]
-    # phone_number: Optional[str] = Field(None, alias='phoneNumber')
-    # create_time: datetime = Field(None, alias='createTime')
-    # update_time: datetime = Field(None, alias='updateTime')
-    remarks: Optional[str] = Field(None, alias='desc', description="介绍")
+    email: Optional[str] = Field(None, alias='email', description="邮箱")
+    phone: Optional[str] = Field(None, alias='phone', description="手机号")
+    avatar: Optional[str] = Field(None, alias='avatar', description="头像")
+    remark: Optional[str] = Field(None, alias='remark', description="介绍")
 
 
 class LoginResult(ORMModel):

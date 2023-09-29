@@ -1,22 +1,23 @@
+from loguru import logger
 from fastapi import Request
 from tortoise import fields
 from passlib.handlers.pbkdf2 import pbkdf2_sha256
 
-from service.models.abc import TortoiseBaseModel
-from service.enums.user import UserGender
 from service.utils.net import get_ip_addr
+from service.models.abc import TortoiseBaseModel
 
 
 class User(TortoiseBaseModel):
     username = fields.CharField(unique=True, max_length=20, description="用户名")
     password = fields.CharField(max_length=255, description="密码")
-    nickname = fields.CharField(null=True, max_length=255, description='昵称')
+
+    name = fields.CharField(null=True, max_length=32, description='真实姓名')
     phone = fields.CharField(unique=True, null=True, max_length=11, description="手机号")
-    email = fields.CharField(unique=True, null=True, max_length=255, description='邮箱')
-    full_name = fields.CharField(null=True, max_length=255, description='姓名')
+    email = fields.CharField(unique=True, null=True, max_length=32, description='邮箱')
+    avatar = fields.CharField(null=True, max_length=255, description='头像')
+    nickname = fields.CharField(null=True, max_length=255, description='昵称')
     is_superuser = fields.BooleanField(default=False, description='是否为超级管理员')
-    head_img = fields.CharField(null=True, max_length=255, description='头像')
-    gender = fields.IntEnumField(UserGender, default=UserGender.unknown)
+
     role: fields.ManyToManyRelation["Role"] = fields.ManyToManyField("base.Role", related_name="user",
                                                                      on_delete=fields.CASCADE)
     profile: fields.OneToOneRelation["UserProfile"]
@@ -139,7 +140,8 @@ class OpLog(TortoiseBaseModel):
             for key, value in body.items():
                 if "password" in key:
                     body[key] = "*" * len(value)
-        except Exception:
+        except Exception as e:
+            logger.warning(e.args[0])
             body = bytes(await req.body()).decode()
 
         data = {

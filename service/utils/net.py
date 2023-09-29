@@ -1,15 +1,27 @@
 import random
 
 import requests
+from faker import Faker
 from loguru import logger
+
+
+fake = Faker(locale='zh_CN')
 
 
 def get_hero() -> dict:
     """获取英雄信息"""
     hero_list = requests.get("https://game.gtimg.cn/images/lol/act/img/js/heroList/hero_list.js").json()["hero"]
     hero = random.choice(hero_list)
-    logger.debug(f"英雄信息: {hero}")
-    return hero
+    info = {
+        "nickname": hero["name"],
+        "name": hero["title"],
+        "avatar": f"https://game.gtimg.cn/images/lol/act/img/champion/{hero['alias']}.png",
+        "phone": fake.phone_number(),
+        "email": fake.email(),
+        "remark": hero["keywords"]
+    }
+    logger.debug(f"英雄信息: {info}")
+    return info
 
 
 def get_ip_addr(ip: str) -> str:
@@ -27,4 +39,5 @@ def get_ip_addr(ip: str) -> str:
 
 
 if __name__ == '__main__':
-    get_ip_addr("125.119.235.142")
+    # get_ip_addr("125.119.235.142")
+    get_hero()

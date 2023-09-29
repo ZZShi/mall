@@ -7,6 +7,7 @@ import Index from '~/views/home/index.vue'
 import About from '~/views/home/about.vue'
 import Login from '~/views/home/login.vue'
 import NotFound from '~/views/home/404.vue'
+import GoodsList from '~/views/goods/list.vue'
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -20,6 +21,13 @@ const router = createRouter({
                     component: Index,
                     meta: {
                         "title": "首页"
+                    }
+                },
+                {
+                    path: "/goods/list",
+                    component: GoodsList,
+                    meta: {
+                        "title": "商品管理"
                     }
                 }
             ]
