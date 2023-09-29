@@ -4,7 +4,7 @@
             <f-header></f-header>
         </el-header>
         <el-container>
-            <el-aside>
+            <el-aside :width="$store.state.asideWidth">
                 <f-menu></f-menu>
             </el-aside>
             <el-main>

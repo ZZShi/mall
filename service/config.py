@@ -170,7 +170,7 @@ class Settings(BaseSettings):
                     "handlers": [
                         "loguru"
                     ],
-                    "level": "WARNING"
+                    "level": "DEBUG"
                 },
                 "apscheduler": {
                     "handlers": [
