@@ -4,7 +4,6 @@ from typing import List, Optional
 from pydantic import BaseModel, Field, validator
 
 from service.common.resp import ORMModel
-from service.enums.user import UserGender
 from service.schemas.admin.role import RoleInfoForLoginResp
 
 
@@ -69,9 +68,11 @@ class ModifyPassword(BaseModel):
 # ModifyInfo = pydantic_model_creator(User, name='ModifyInfo', include=('nickname', 'full_name', 'gender'))
 # 自动生成的模型，不支持枚举
 class ModifyInfo(BaseModel):
+    name: str | None = None
     nickname: str | None = None
-    full_name: str | None = None
-    gender: UserGender = UserGender.unknown
+    phone: str | None = None
+    email: str | None = None
+    avatar: str | None = None
 
     @classmethod
     @validator('*')
